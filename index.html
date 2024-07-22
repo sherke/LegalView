@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Tableau Dashboard</title>
     <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
     <style>
-        body{
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -12,7 +13,7 @@
             padding: 0px;
         }
 
-        #vizContainer{
+        #vizContainer {
             width: 100vw;
             height: 100vh;
 
@@ -22,15 +23,22 @@
 
         /* Style for the popup */
         #loadTimePopup {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-            display: flex; /* Center the content */
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Black w/ opacity */
+            display: flex;
+            /* Center the content */
             justify-content: center;
             align-items: center;
         }
@@ -40,10 +48,12 @@
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
             width: 80%;
             max-width: 400px;
+            position: relative;
+            /* For positioning the close button */
         }
 
         /* Popup title */
@@ -59,14 +69,37 @@
             font-size: 1em;
             color: #666;
         }
+
+        /* Close button */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            line-height: 25px;
+        }
+
+        .close-btn:hover {
+            background-color: #ddd;
+        }
     </style>
 </head>
+
 <body>
-    <div id="vizContainer"></div>
+    <div id="vizContainer" ></div>
 
     <!-- The Popup -->
     <div id="loadTimePopup">
         <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">×</button>
             <h2>Loading Time</h2>
             <p id="loadTimeMessage"></p>
         </div>
@@ -82,18 +115,25 @@
             message.innerHTML = 'The report took ' + loadTime + ' seconds to load.';
             popup.style.display = "flex"; // Show the popup
 
-            // Hide the popup after 5 seconds
-            setTimeout(function() {
-                popup.style.display = "none";
+            // Automatically hide the popup after 5 seconds, if not manually closed
+            setTimeout(function () {
+                if (popup.style.display === "flex") {
+                    closePopup();
+                }
             }, 5000); // 5000 milliseconds = 5 seconds
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("loadTimePopup");
+            popup.style.display = "none";
         }
 
         function initViz() {
             var containerDiv = document.getElementById("vizContainer"),
                 url = "https://10ax.online.tableau.com/t/preprodtmp/views/LegalComplianceViewWithDependency_17170698529130/LegalDependency?:showVizHome=no&:embed=true";
-            
+
             startTime = new Date().getTime(); // Record the start time
-            
+
             var options = {
                 onFirstInteractive: function () {
                     endTime = new Date().getTime(); // Record the end time
@@ -101,11 +141,12 @@
                     showLoadTimePopup(loadTime);
                 }
             };
-            
+
             viz = new tableau.Viz(containerDiv, url, options);
         }
 
         document.addEventListener("DOMContentLoaded", initViz);
     </script>
 </body>
+
 </html>
